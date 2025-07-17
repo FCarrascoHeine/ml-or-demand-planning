@@ -1,0 +1,64 @@
+import pulp
+
+
+def run_optimization(input_data):
+    """
+    Run the inventory allocation optimization model.
+    This function sets up the problem, defines the decision variables,
+    constraints, and objective function, and then solves the model.
+    """
+
+    stores, days, demand, holding_cost, shortage_weight, capacity, initial_inventory = (
+        input_data[k] for k in [
+            'stores',
+            'days',
+            'demand',
+            'holding_cost',
+            'shortage_weight',
+            'capacity',
+            'initial_inventory'
+        ]
+    )
+
+    # Model
+    model = pulp.LpProblem("Inventory_Allocation", pulp.LpMinimize)
+
+    # Decision variables
+    x = pulp.LpVariable.dicts("Ship", (stores, days), lowBound=0, cat="Continuous")       # x_it
+    I = pulp.LpVariable.dicts("Inventory", (stores, days), lowBound=0, cat="Continuous")  # I_it
+    s = pulp.LpVariable.dicts("Shortage", (stores, days), lowBound=0, cat="Continuous")   # s_it
+
+    # Objective function: Minimize total cost
+    model += pulp.lpSum([
+        holding_cost[i] * I[i][t] + shortage_weight[i] * s[i][t]
+        for i in stores for t in days
+    ])
+
+    # Constraints
+    for i in stores:
+        for t in days:
+            # Inventory balance
+            if t == 1:
+                model += I[i][t] == initial_inventory[i] + x[i][t] - demand[i, t] + s[i][t], f"FlowBalance_{i}_{t}"
+            else:
+                model += I[i][t] == I[i][t-1] + x[i][t] - demand[i, t] + s[i][t], f"FlowBalance_{i}_{t}"
+
+            # Shortage constraint (s_it >= d_it - I_it - x_it)
+            if t == 1:
+                model += s[i][t] >= demand[i, t] - initial_inventory[i] - x[i][t], f"Shortage_{i}_{t}"
+            else:
+                model += s[i][t] >= demand[i, t] - I[i][t-1] - x[i][t], f"Shortage_{i}_{t}"
+
+    # Shipping capacity constraint per day
+    for t in days:
+        model += pulp.lpSum([x[i][t] for i in stores]) <= capacity[t], f"Capacity_{t}"
+
+    # Solve
+    model.solve()
+
+    # Output solution
+    print("Status:", pulp.LpStatus[model.status])
+    print("Total Cost:", pulp.value(model.objective))
+    # for i in stores:
+    #     for t in days:
+    #         print(f"{i}, Day {t}: Ship={x[i][t].varValue}, Inventory={I[i][t].varValue}, Shortage={s[i][t].varValue}")
