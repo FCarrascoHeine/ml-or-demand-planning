@@ -36,18 +36,15 @@ def run_optimization(input_data):
 
     # Constraints
     for i in stores:
-        for t in days:
-            # Inventory balance
-            if t == 1:
-                model += I[i][t] == initial_inventory[i] + x[i][t] - demand[i, t] + s[i][t], f"FlowBalance_{i}_{t}"
+        for t_index in range(len(days)):
+            t = days[t_index]
+            if t_index == 0:
+                model += I[i][t] == initial_inventory[i] + x[i][t] - demand[i, t] + s[i][t], f"FlowBalance_{i}_{t}" # Inventory balance
+                model += s[i][t] >= demand[i, t] - initial_inventory[i] - x[i][t], f"Shortage_{i}_{t}" # Shortage constraint
             else:
-                model += I[i][t] == I[i][t-1] + x[i][t] - demand[i, t] + s[i][t], f"FlowBalance_{i}_{t}"
-
-            # Shortage constraint (s_it >= d_it - I_it - x_it)
-            if t == 1:
-                model += s[i][t] >= demand[i, t] - initial_inventory[i] - x[i][t], f"Shortage_{i}_{t}"
-            else:
-                model += s[i][t] >= demand[i, t] - I[i][t-1] - x[i][t], f"Shortage_{i}_{t}"
+                t_minus_1 = days[t_index - 1]
+                model += I[i][t] == I[i][t_minus_1] + x[i][t] - demand[i, t] + s[i][t], f"FlowBalance_{i}_{t}" # Inventory balance
+                model += s[i][t] >= demand[i, t] - I[i][t_minus_1] - x[i][t], f"Shortage_{i}_{t}" # Shortage constraint            
 
     # Shipping capacity constraint per day
     for t in days:
