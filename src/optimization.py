@@ -1,4 +1,9 @@
+import json
 import pulp
+
+import pandas as pd
+
+from pathlib import Path
 
 
 def run_optimization(input_data):
@@ -34,7 +39,7 @@ def run_optimization(input_data):
         for i in stores for t in days
     ])
 
-    # Constraints
+    # Inventory and shortage constraints
     for i in stores:
         for t_index in range(len(days)):
             t = days[t_index]
@@ -59,3 +64,22 @@ def run_optimization(input_data):
     # for i in stores:
     #     for t in days:
     #         print(f"{i}, Day {t}: Ship={x[i][t].varValue}, Inventory={I[i][t].varValue}, Shortage={s[i][t].varValue}")
+
+    # Save results
+    shipment_decisions = {(i, t): x[i][t].varValue for i in stores for t in days}
+    inventory_decisions = {(i, t): I[i][t].varValue for i in stores for t in days}
+    shortage_decisions = {(i, t): s[i][t].varValue for i in stores for t in days}
+
+    holding_costs = {(i, t): holding_cost[i] * I[i][t].varValue for i in stores for t in days}
+    shortage_weights = {(i, t): shortage_weight[i] * s[i][t].varValue for i in stores for t in days}
+
+    total_cost = pulp.value(model.objective)
+
+    return {
+        'shipment_decisions': shipment_decisions,
+        'inventory_decisions': inventory_decisions,
+        'shortage_decisions': shortage_decisions,
+        'holding_costs': holding_costs,
+        'shortage_weights': shortage_weights,
+        'total_cost': total_cost
+    }
