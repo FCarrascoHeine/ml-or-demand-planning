@@ -10,6 +10,7 @@ def post_processing(output_data):
     Post-processes the output data from the optimization model.
     """
     
+    demand_df = dict_to_df(output_data['demand'], ['Store', 'Date', 'Sales'])
     shipment_decisions_df = dict_to_df(output_data['shipment_decisions'], ['Store', 'Date', 'Shipment'])
     inventory_decisions_df = dict_to_df(output_data['inventory_decisions'], ['Store', 'Date', 'Inventory'])
     shortage_decisions_df = dict_to_df(output_data['shortage_decisions'], ['Store', 'Date', 'Shortage'])
@@ -24,6 +25,7 @@ def post_processing(output_data):
         json.dump(costs, f, indent=4)
 
     # Save DataFrames to CSV files
+    demand_df.to_csv(root/'results'/'demand.csv', index=False)
     shipment_decisions_df.to_csv(root/'results'/'shipment_decisions.csv', index=False)
     inventory_decisions_df.to_csv(root/'results'/'inventory_decisions.csv', index=False)
     shortage_decisions_df.to_csv(root/'results'/'shortage_decisions.csv', index=False)

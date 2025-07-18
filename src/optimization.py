@@ -71,6 +71,7 @@ def run_optimization(input_data):
     total_cost = pulp.value(model.objective)
 
     return {
+        'demand': demand,
         'shipment_decisions': shipment_decisions,
         'inventory_decisions': inventory_decisions,
         'shortage_decisions': shortage_decisions,
