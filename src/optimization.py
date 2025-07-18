@@ -1,9 +1,4 @@
-import json
 import pulp
-
-import pandas as pd
-
-from pathlib import Path
 
 
 def run_optimization(input_data):
@@ -29,13 +24,13 @@ def run_optimization(input_data):
     model = pulp.LpProblem("Inventory_Allocation", pulp.LpMinimize)
 
     # Decision variables
-    x = pulp.LpVariable.dicts("Ship", (stores, days), lowBound=0, cat="Continuous")       # x_it
-    I = pulp.LpVariable.dicts("Inventory", (stores, days), lowBound=0, cat="Continuous")  # I_it
-    s = pulp.LpVariable.dicts("Shortage", (stores, days), lowBound=0, cat="Continuous")   # s_it
+    x = pulp.LpVariable.dicts("Ship", (stores, days), lowBound=0, cat="Continuous")
+    Inv = pulp.LpVariable.dicts("Inventory", (stores, days), lowBound=0, cat="Continuous")
+    s = pulp.LpVariable.dicts("Shortage", (stores, days), lowBound=0, cat="Continuous")
 
     # Objective function: Minimize total cost
     model += pulp.lpSum([
-        holding_cost[i] * I[i][t] + shortage_weight[i] * s[i][t]
+        holding_cost[i] * Inv[i][t] + shortage_weight[i] * s[i][t]
         for i in stores for t in days
     ])
 
@@ -44,12 +39,12 @@ def run_optimization(input_data):
         for t_index in range(len(days)):
             t = days[t_index]
             if t_index == 0:
-                model += I[i][t] == initial_inventory[i] + x[i][t] - demand[i, t] + s[i][t], f"FlowBalance_{i}_{t}" # Inventory balance
+                model += Inv[i][t] == initial_inventory[i] + x[i][t] - demand[i, t] + s[i][t], f"FlowBalance_{i}_{t}" # Inventory balance
                 model += s[i][t] >= demand[i, t] - initial_inventory[i] - x[i][t], f"Shortage_{i}_{t}" # Shortage constraint
             else:
                 t_minus_1 = days[t_index - 1]
-                model += I[i][t] == I[i][t_minus_1] + x[i][t] - demand[i, t] + s[i][t], f"FlowBalance_{i}_{t}" # Inventory balance
-                model += s[i][t] >= demand[i, t] - I[i][t_minus_1] - x[i][t], f"Shortage_{i}_{t}" # Shortage constraint            
+                model += Inv[i][t] == Inv[i][t_minus_1] + x[i][t] - demand[i, t] + s[i][t], f"FlowBalance_{i}_{t}" # Inventory balance
+                model += s[i][t] >= demand[i, t] - Inv[i][t_minus_1] - x[i][t], f"Shortage_{i}_{t}" # Shortage constraint            
 
     # Shipping capacity constraint per day
     for t in days:
@@ -63,14 +58,14 @@ def run_optimization(input_data):
     print("Total Cost:", pulp.value(model.objective))
     # for i in stores:
     #     for t in days:
-    #         print(f"{i}, Day {t}: Ship={x[i][t].varValue}, Inventory={I[i][t].varValue}, Shortage={s[i][t].varValue}")
+    #         print(f"{i}, Day {t}: Ship={x[i][t].varValue}, Inventory={Inv[i][t].varValue}, Shortage={s[i][t].varValue}")
 
     # Save results
     shipment_decisions = {(i, t): x[i][t].varValue for i in stores for t in days}
-    inventory_decisions = {(i, t): I[i][t].varValue for i in stores for t in days}
+    inventory_decisions = {(i, t): Inv[i][t].varValue for i in stores for t in days}
     shortage_decisions = {(i, t): s[i][t].varValue for i in stores for t in days}
 
-    holding_costs = {(i, t): holding_cost[i] * I[i][t].varValue for i in stores for t in days}
+    holding_costs = {(i, t): holding_cost[i] * Inv[i][t].varValue for i in stores for t in days}
     shortage_weights = {(i, t): shortage_weight[i] * s[i][t].varValue for i in stores for t in days}
 
     total_cost = pulp.value(model.objective)
