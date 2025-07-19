@@ -18,7 +18,7 @@ The project is based on the Rossmann Store Sales dataset from a Kaggle competiti
 - ✅ Data preprocessing complete  
 - ✅ ML pipeline implemented in Jupyter notebooks (XGBoost-based forecasting) 
 - ✅ Define and solve the OR optimization model using PuLP
-- ⏳ Next step: Deploy via AWS
+- ⏳ Next step: Deploy to AWS
 
 ## 🛠️ Tools Used
 
