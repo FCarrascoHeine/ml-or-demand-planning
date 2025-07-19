@@ -95,7 +95,7 @@ Minimize:
     sum_{i in stores} Ship[i, t] <= capacity[t]   for all t in days
     ```
 
-This model determines the optimal shipping, inventory, and shortage levels to minimize total costs while satisfying demand and capacity constraints.
+This model determines the optimal shipping, inventory, and shortage levels to minimize total costs while satisfying balance and capacity constraints.
 
 
 ## 📌 Next Steps
