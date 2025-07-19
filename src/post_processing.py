@@ -15,7 +15,7 @@ def post_processing(output_data):
     inventory_decisions_df = dict_to_df(output_data['inventory_decisions'], ['Store', 'Date', 'Inventory'])
     shortage_decisions_df = dict_to_df(output_data['shortage_decisions'], ['Store', 'Date', 'Shortage'])
     holding_costs_df = dict_to_df(output_data['holding_costs'], ['Store', 'Date', 'HoldingCost'])
-    shortage_weights_df = dict_to_df(output_data['shortage_weights'], ['Store', 'Date', 'ShortageWeight'])
+    shortage_penalties_df = dict_to_df(output_data['shortage_penalties'], ['Store', 'Date', 'ShortagePenalty'])
 
     # Save costs
     costs = {
@@ -30,7 +30,7 @@ def post_processing(output_data):
     inventory_decisions_df.to_csv(root/'results'/'inventory_decisions.csv', index=False)
     shortage_decisions_df.to_csv(root/'results'/'shortage_decisions.csv', index=False)
     holding_costs_df.to_csv(root/'results'/'holding_costs.csv', index=False)
-    shortage_weights_df.to_csv(root/'results'/'shortage_weights.csv', index=False)
+    shortage_penalties_df.to_csv(root/'results'/'shortage_penalties.csv', index=False)
 
 
 def dict_to_df(my_dict, columns):

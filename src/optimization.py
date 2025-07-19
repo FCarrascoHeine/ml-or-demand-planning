@@ -8,13 +8,13 @@ def run_optimization(input_data):
     constraints, and objective function, and then solves the model.
     """
 
-    stores, days, demand, holding_cost, shortage_weight, capacity, initial_inventory = (
+    stores, days, demand, holding_cost, shortage_penalty, capacity, initial_inventory = (
         input_data[k] for k in [
             'stores',
             'days',
             'demand',
             'holding_cost',
-            'shortage_weight',
+            'shortage_penalty',
             'capacity',
             'initial_inventory'
         ]
@@ -30,7 +30,7 @@ def run_optimization(input_data):
 
     # Objective function: Minimize total cost
     model += pulp.lpSum([
-        holding_cost[i] * Inv[i][t] + shortage_weight[i] * s[i][t]
+        holding_cost[i] * Inv[i][t] + shortage_penalty[i] * s[i][t]
         for i in stores for t in days
     ])
 
@@ -66,7 +66,7 @@ def run_optimization(input_data):
     shortage_decisions = {(i, t): s[i][t].varValue for i in stores for t in days}
 
     holding_costs = {(i, t): holding_cost[i] * Inv[i][t].varValue for i in stores for t in days}
-    shortage_weights = {(i, t): shortage_weight[i] * s[i][t].varValue for i in stores for t in days}
+    shortage_penalties = {(i, t): shortage_penalty[i] * s[i][t].varValue for i in stores for t in days}
 
     total_cost = pulp.value(model.objective)
 
@@ -76,6 +76,6 @@ def run_optimization(input_data):
         'inventory_decisions': inventory_decisions,
         'shortage_decisions': shortage_decisions,
         'holding_costs': holding_costs,
-        'shortage_weights': shortage_weights,
+        'shortage_penalties': shortage_penalties,
         'total_cost': total_cost
     }

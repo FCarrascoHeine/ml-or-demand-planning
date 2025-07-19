@@ -36,7 +36,7 @@ def create_input():
     
     # Optimization model parameters - Randomly or arbitrarily generated values
     holding_cost = {i: HOLDING_SHORTAGE_RATIO * random.random() for i in stores}  # holding cost h_i
-    shortage_weight = {i: random.random() for i in stores}                        # shortage weight w_i
+    shortage_penalty = {i: random.random() for i in stores}                        # shortage penalty w_i
     
     max_demand = max(sum(demand[i, t] for i in stores) for t in days)
     capacity = {t: CAPACITY_FRACTION*max_demand for t in days}                    # warehouse capacity C_t
@@ -48,7 +48,7 @@ def create_input():
         'days': days,
         'demand': demand,
         'holding_cost': holding_cost,
-        'shortage_weight': shortage_weight,
+        'shortage_penalty': shortage_penalty,
         'capacity': capacity,
         'initial_inventory': initial_inventory
     }
