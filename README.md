@@ -1,10 +1,10 @@
-# ⚙️ Forecast & Optimize – Demand Planning with ML + OR on AWS
+# ⚙️ Forecast & Optimize – Demand Planning with ML + OR
 
-This project demonstrates an end-to-end demand planning pipeline combining machine learning (ML) and operations research (OR), using AWS services where possible.
+This project demonstrates an end-to-end demand planning pipeline combining machine learning (ML) and operations research (OR).
 
 ## 🚀 Overview
 
-The goal is to forecast product demand using a machine learning model (e.g., XGBoost) and then use the forecasted values as inputs to an inventory allocation optimization model. Eventually, the full pipeline will be deployed as a callable REST API on AWS.
+The goal is to forecast product demand using a machine learning model (e.g., XGBoost) and then use the forecasted values as inputs to an inventory allocation optimization model.
 
 ## 📊 Data
 
@@ -18,14 +18,12 @@ The project is based on the Rossmann Store Sales dataset from a Kaggle competiti
 - ✅ Data preprocessing complete  
 - ✅ ML pipeline implemented in Jupyter notebooks (XGBoost-based forecasting) 
 - ✅ Define and solve the OR optimization model using PuLP
-- ⏳ Next step: Deploy to AWS
 
 ## 🛠️ Tools Used
 
 - Python, Jupyter
 - XGBoost for forecasting
 - PuLP for optimization
-- (Planned) AWS SageMaker, S3, Lambda for deployment
 
 ## 📁 Structure
 
@@ -100,6 +98,6 @@ This model determines the optimal shipping, inventory, and shortage levels to mi
 
 ## 📌 Next Steps
 
-- Begin migrating components to AWS
+- Think of potential extensions and improvements
 
 ---
