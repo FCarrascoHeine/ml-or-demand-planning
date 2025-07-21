@@ -4,7 +4,7 @@ This project demonstrates an end-to-end demand planning pipeline combining machi
 
 ## 🚀 Overview
 
-The goal is to forecast product demand using a machine learning model (e.g., XGBoost) and then use the forecasted values as inputs to an inventory allocation optimization model.
+The goal is to forecast product demand using a machine learning model and then use the forecasted values as inputs to an inventory allocation optimization model.
 
 ## 📊 Data
 
@@ -30,9 +30,9 @@ The project is based on the Rossmann Store Sales dataset from a Kaggle competiti
 ```
 .
 ├── data/                # Mocked data samples; include real data in this folder
-├── notebooks/           # ML pipeline and preprocessing (Jupyter notebooks)
+├── notebooks/           # ML pipeline, preprocessing, and visualization of final results (Jupyter notebooks)
 ├── results/             # Results are saved here
-├── src/                 # Scripts for OR model and deployment logic
+├── src/                 # Scripts for OR model
 ├── .gitignore
 ├── README.md
 ├── requirements.txt
@@ -99,5 +99,6 @@ This model determines the optimal shipping, inventory, and shortage levels to mi
 ## 📌 Next Steps
 
 - Think of potential extensions and improvements
+- Deployment?
 
 ---
